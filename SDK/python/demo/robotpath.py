@@ -2,13 +2,19 @@ import sys
 import numpy as np
 import math
 
-k_p = 7.0
-k_i = 0.01
-k_d = 5.0
+
 max_linear_velocity = 6
 max_angular_velocity = math.pi
 
-def pid_control(error, integral_error, pre_error):
+def pid_control(error, integral_error, pre_error, type):
+    if type == 'v':
+        k_p = 9.0
+        k_i = 0.0
+        k_d = 0.0
+    if type == 'w':
+        k_p = 10.0
+        k_i = 0.0
+        k_d = 5.0
     integral_error += error
     derivative_error = error - pre_error
     control = k_p * error + k_i * integral_error + k_d * derivative_error
@@ -46,8 +52,8 @@ def robot_control(robot, *frame_workshop_status,):
         error_distance = math.sqrt(dx**2 + dy**2)
         error_target2toward = error_check(angle_target - angle_toward)
         
-        current_v, robot.v_integral_error, robot.v_prev_error = pid_control(error_distance, robot.v_integral_error, robot.v_prev_error)
-        current_w, robot.w_integral_error, robot.w_prev_error = pid_control(error_target2toward, robot.w_integral_error, robot.w_prev_error)
+        current_v, robot.v_integral_error, robot.v_prev_error = pid_control(error_distance, robot.v_integral_error, robot.v_prev_error, 'v')
+        current_w, robot.w_integral_error, robot.w_prev_error = pid_control(error_target2toward, robot.w_integral_error, robot.w_prev_error, 'w')
 
         linear_velocity = str(min(current_v, max_linear_velocity))
         angular_velocity = str(min(current_w, max_angular_velocity))

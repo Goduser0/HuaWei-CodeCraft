@@ -2,7 +2,7 @@
 import sys
 import numpy as np
 # Delete before using
-# import time
+import time
 # import threading
 from tasks import tasks_sort
 from cmd import read_util_ok, finish
@@ -40,14 +40,14 @@ class robot(object):
         self.locx = locx
         self.locy = locy
 
-
 if __name__ == '__main__':
     test = False
 
     frame_robot_status = [robot('0'), robot('1'), robot('2'), robot('3')]
     read_util_ok()  # 初始化时读入地图数据，直到OK结束
     finish()        # 初始化完成
-    
+    tasks = []
+    task_tree = []
     v_integral_error = 0.0
     v_prev_error = 0.0
     w_integral_error = 0.0
@@ -111,106 +111,106 @@ if __name__ == '__main__':
         
         # 忽略其他输入数据，读到OK为止
         read_util_ok()
-        
-        # 
-        
+    
         # 指令下发
-        tasks = tasks_sort(*frame_workshop_status)
+        if task_tree:
+            pass
+        else:
+            task_tree = tasks_sort(*frame_workshop_status)
         
+        if len(tasks)>4:
+            pass
+        else:
+            tasks += task_tree
+        # sys.stderr.write(str(len(tasks)) + '\n')
         # 显示任务分配策略
-        sys.stderr.write('task:' + str(frame_id) + '\n')
-        for task in tasks:
-            sys.stderr.write(str(task[0]) + '->' + str(task[1]) + '\n')
-        
+        # sys.stderr.write('task:' + str(frame_id) + '\n')
+        # for task in tasks:
+        #     sys.stderr.write(str(task[0]) + '->' + str(task[1]) + '\n')
         
         # 指令输出
         sys.stdout.write(frame_id + '\n')
           
-        # i = 0
-        # for robot_i in frame_robot_status: 
-        #     if robot_i.task:
-        #         if robot_i.carry != '0':
-        #             if robot_i.in_work_shop_id == robot_i.task[1]:
-        #                 sys.stdout.write('sell ' + str(i) + '\n')
-        #                 sys.stdout.write('forward ' + str(i) + ' 0'+'\n')
-        #                 sys.stdout.write('rotate '+ str(i) + ' 0'+'\n')
-        #                 robot_i.task = None
-        #                 robot_i.target_ID = None  
-        #             else:    
-        #                 robot_i.target_ID = robot_i.task[1]
-        #                 args = robot_control(robot_i, *frame_workshop_status)
-        #                 sys.stdout.write('forward '+ str(i) + ' ' + args[0] +'\n')
-        #                 sys.stdout.write('rotate ' + str(i) + ' ' + args[1] +'\n')
-        #         else:
-        #             if robot_i.in_work_shop_id == robot_i.task[0]:
-        #                 sys.stdout.write('buy '+ str(i) + '\n')
-        #                 sys.stdout.write('forward ' + str(i) + ' 0' + '\n')
-        #                 sys.stdout.write('rotate ' + str(i) + ' 0' + '\n')
-        #                 robot_i.target_ID = robot_i.task[1]
-
-        #             else:
-        #                 robot_i.target_ID = robot_i.task[0]
-        #                 args = robot_control(robot_i, *frame_workshop_status)
-        #                 sys.stdout.write('forward '+ str(i) + ' ' + args[0] +'\n')
-        #                 sys.stdout.write('rotate ' + str(i) + ' ' + args[1] +'\n')
-        #     else:
-        #         if len(tasks) != 0:
-        #             robot_i.task = tasks[0]
-        #             tasks.remove(tasks[0])
-        #             robot_i.target_ID = robot_i.task[0]
-        #             args = robot_control(robot_i, *frame_workshop_status)
-        #             sys.stdout.write('forward '+ str(i) + ' ' + args[0]+'\n')
-        #             sys.stdout.write('rotate ' + str(i) + ' ' + args[1] +'\n')
-        #     i+=1
-        #     if robot_i.task:
-        #         sys.                                                                                                                                                                                                                                  stderr.write(robot_i.ID + ':' + robot_i.task[0] + '->' + robot_i.task[1]+ '\n')
-        #     else:   
-        #         sys.stderr.write(robot_i.ID + ':' + 'No task' + '\n')
-        
-        
         i = 0
-        robot0 = frame_robot_status[0]
-        if robot0.task:
-            sys.stderr.write('task'+robot0.task[0]+'->'+robot0.task[1]+'\n')
-            sys.stderr.write('target'+str(robot0.target_ID)+'\n')
-            if robot0.carry != '0':
-                # sys.stderr.write('carry-'+'\n')
-                if robot0.in_work_shop_id == robot0.task[1]:
-                    # sys.stderr.write('sell'+'\n')
-                    sys.stdout.write('sell ' + str(i) + '\n')
-                    sys.stdout.write('forward ' + str(i) + ' 0'+'\n')
-                    sys.stdout.write('rotate '+ str(i) + ' 0'+'\n')
-                    robot0.task = None
-                    robot0.target_ID = None  
+        for robot_i in frame_robot_status: 
+            if robot_i.task:
+                if robot_i.carry != '0':
+                    if robot_i.in_work_shop_id == robot_i.task[1]:
+                        sys.stdout.write('sell ' + str(i) + '\n')
+                        sys.stdout.write('forward ' + str(i) + ' 0'+'\n')
+                        sys.stdout.write('rotate '+ str(i) + ' 0'+'\n')
+                        robot_i.task = None
+                        robot_i.target_ID = None  
+                    else:    
+                        robot_i.target_ID = robot_i.task[1]
+                        args = robot_control(robot_i, *frame_workshop_status)
+                        sys.stdout.write('forward '+ str(i) + ' ' + args[0] +'\n')
+                        sys.stdout.write('rotate ' + str(i) + ' ' + args[1] +'\n')
                 else:
-                    # sys.stderr.write('to end'+'\n')    
-                    robot0.target_ID = robot0.task[1]
-                    args = robot_control(robot0, *frame_workshop_status)
-                    sys.stdout.write('forward '+ str(i) + ' ' + args[0] +'\n')
-                    sys.stdout.write('rotate ' + str(i) + ' ' + args[1] +'\n')
-            else:
-                if robot0.in_work_shop_id == robot0.task[0]:
-                    # sys.stderr.write('buy'+'\n')
-                    sys.stdout.write('buy '+ str(i) + '\n')
-                    sys.stdout.write('forward ' + str(i) + ' 0' + '\n')
-                    sys.stdout.write('rotate ' + str(i) + ' 0' + '\n')
-                    robot0.target_ID = robot0.task[1]
+                    if robot_i.in_work_shop_id == robot_i.task[0]:
+                        sys.stdout.write('buy '+ str(i) + '\n')
+                        sys.stdout.write('forward ' + str(i) + ' 0' + '\n')
+                        sys.stdout.write('rotate ' + str(i) + ' 0' + '\n')
+                        robot_i.target_ID = robot_i.task[1]
 
-                else:
-                    # sys.stderr.write('to start'+'\n')
-                    robot0.target_ID = robot0.task[0]
-                    args = robot_control(robot0, *frame_workshop_status)
-                    sys.stdout.write('forward '+ str(i) + ' ' + args[0] +'\n')
+                    else:
+                        robot_i.target_ID = robot_i.task[0]
+                        args = robot_control(robot_i, *frame_workshop_status)
+                        sys.stdout.write('forward '+ str(i) + ' ' + args[0] +'\n')
+                        sys.stdout.write('rotate ' + str(i) + ' ' + args[1] +'\n')
+            else:
+                if len(tasks) != 0:
+                    robot_i.task = tasks[0]
+                    tasks = tasks[1:]
+                    
+                    robot_i.target_ID = robot_i.task[0]
+                    args = robot_control(robot_i, *frame_workshop_status)
+                    sys.stdout.write('forward '+ str(i) + ' ' + args[0]+'\n')
                     sys.stdout.write('rotate ' + str(i) + ' ' + args[1] +'\n')
-        else:
-            # sys.stderr.write('no task'+'\n')
-            if len(tasks) != 0:
-                robot0.task = tasks[i]
-                robot0.target_ID = robot0.task[0]
-        sys.stderr.write('/\\'+ frame_id +'--------------------------------------------'+'\n') 
+            i+=1
+
         
         
+        # i = 0
+        # robot0 = frame_robot_status[0]
+        # if robot0.task:
+        #     sys.stderr.write('task'+robot0.task[0]+'->'+robot0.task[1]+'\n')
+        #     if robot0.carry != '0':
+        #         # sys.stderr.write('carry-'+'\n')
+        #         if robot0.in_work_shop_id == robot0.task[1]:
+        #             # sys.stderr.write('sell'+'\n')
+        #             sys.stdout.write('sell ' + str(i) + '\n')
+        #             sys.stdout.write('forward ' + str(i) + ' 0'+'\n')
+        #             sys.stdout.write('rotate '+ str(i) + ' 0'+'\n')
+        #             robot0.task = None
+        #             robot0.target_ID = None  
+        #         else:
+        #             # sys.stderr.write('to end'+'\n')    
+        #             robot0.target_ID = robot0.task[1]
+        #             args = robot_control(robot0, *frame_workshop_status)
+        #             sys.stdout.write('forward '+ str(i) + ' ' + args[0] +'\n')
+        #             sys.stdout.write('rotate ' + str(i) + ' ' + args[1] +'\n')
+        #     else:
+        #         if robot0.in_work_shop_id == robot0.task[0]:
+        #             # sys.stderr.write('buy'+'\n')
+        #             sys.stdout.write('buy '+ str(i) + '\n')
+        #             sys.stdout.write('forward ' + str(i) + ' 0' + '\n')
+        #             sys.stdout.write('rotate ' + str(i) + ' 0' + '\n')
+        #             robot0.target_ID = robot0.task[1]
+
+        #         else:
+        #             # sys.stderr.write('to start'+'\n')
+        #             robot0.target_ID = robot0.task[0]
+        #             args = robot_control(robot0, *frame_workshop_status)
+        #             sys.stdout.write('forward '+ str(i) + ' ' + args[0] +'\n')
+        #             sys.stdout.write('rotate ' + str(i) + ' ' + args[1] +'\n')
+        # else:
+        #     # sys.stderr.write('no task'+'\n')
+        #     if len(tasks) != 0:
+        #         robot0.task = tasks[0]
+        #         tasks.remove(tasks[0])
+        #         robot0.target_ID = robot0.task[0]
+        # sys.stderr.write('/\\'+ frame_id +'--------------------------------------------'+'\n') 
         
-             
         finish()
         
