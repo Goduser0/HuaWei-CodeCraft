@@ -4,7 +4,7 @@ import numpy as np
 # Delete before using
 import time
 # import threading
-from tasks import tasks_sort
+from tasks import framework_search
 from cmd import read_util_ok, finish
 from robotpath import robot_control
 
@@ -42,7 +42,6 @@ class robot(object):
 
 if __name__ == '__main__':
     test = False
-
     frame_robot_status = [robot('0'), robot('1'), robot('2'), robot('3')]
     read_util_ok()  # 初始化时读入地图数据，直到OK结束
     finish()        # 初始化完成
@@ -85,7 +84,7 @@ if __name__ == '__main__':
                 int(bin(int(parts[4], 10)), 2), 
                 parts[5],
                 )
-       
+        
         # 获取场上robot状态
         for i in range(4):
             line = sys.stdin.readline().strip()
@@ -113,20 +112,47 @@ if __name__ == '__main__':
         read_util_ok()
     
         # 指令下发
-        if task_tree:
-            pass
-        else:
-            task_tree = tasks_sort(*frame_workshop_status)
+        task_tree = framework_search(*frame_workshop_status)
         
-        if len(tasks)>4:
-            pass
+           
+        if len(tasks) <= 4:
+            for i in task_tree[:6]:
+                tasks.append((i[0].ID, i[1].ID))
         else:
-            tasks += task_tree
-        # sys.stderr.write(str(len(tasks)) + '\n')
+            pass
+        
+        task_level2 = task_tree[6:9]
+        for part in task_level2:
+            if part[0].out_status == '1' and ((part[0].ID, part[1].ID) not in tasks):
+                signal = True
+                for r in frame_robot_status:
+                    if r.task == (part[0].ID, part[1].ID):
+                        signal = False
+                if signal:
+                    tasks.insert(0, (part[0].ID, part[1].ID))
+                    
+        task_level3 = task_tree[9]
+        if task_level3[0].out_status == '1' and ((task_level3[0].ID, task_level3[1].ID) not in tasks):
+            signal = True
+            for r in frame_robot_status:
+                if r.task == (task_level3[0].ID, task_level3[1].ID):
+                    signal = False
+            if signal:
+                tasks.insert(0, (task_level3[0].ID, task_level3[1].ID))
+            
+        
         # 显示任务分配策略
         # sys.stderr.write('task:' + str(frame_id) + '\n')
         # for task in tasks:
         #     sys.stderr.write(str(task[0]) + '->' + str(task[1]) + '\n')
+        
+        # 显示robot的任务
+        sys.stderr.write('task:' + str(frame_id) + '\n')
+        for robot in frame_robot_status:
+            if robot.task:
+                sys.stderr.write(robot.ID + ':' + robot.task[0] + '->' + robot.task[1] + '\n')
+            else:
+                sys.stderr.write(robot.ID + ': None' + '\n')
         
         # 指令输出
         sys.stdout.write(frame_id + '\n')
