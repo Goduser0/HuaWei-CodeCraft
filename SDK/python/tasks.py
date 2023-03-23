@@ -163,8 +163,10 @@ def framework_search(*workshops):
             (workshop_5, workshop_7),
             (workshop_6, workshop_7),
         ]
-    
-       
+    if workshops_final and workshops_type7:
+        framework = framework1[:6] + framework2[:6] + framework1[6:9] + framework2[6:9] + [(workshop_7, workshop_8), (workshop_7, workshop_8)]
+    else:
+        framework = framework1[:6] + framework2[:6] + framework1[6:9] + framework2[6:9]
         
     return framework
 

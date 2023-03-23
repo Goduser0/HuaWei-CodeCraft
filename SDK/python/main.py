@@ -116,12 +116,12 @@ if __name__ == '__main__':
         
            
         if len(tasks) <= 4:
-            for i in task_tree[:6]:
+            for i in task_tree[:12]:
                 tasks.append((i[0].ID, i[1].ID))
         else:
             pass
         
-        task_level2 = task_tree[6:9]
+        task_level2 = task_tree[12:18]
         for part in task_level2:
             if part[0].out_status == '1' and ((part[0].ID, part[1].ID) not in tasks):
                 signal = True
@@ -131,15 +131,15 @@ if __name__ == '__main__':
                 if signal:
                     tasks.insert(0, (part[0].ID, part[1].ID))
                     
-        task_level3 = task_tree[9]
-        if task_level3[0].out_status == '1' and ((task_level3[0].ID, task_level3[1].ID) not in tasks):
-            signal = True
-            for r in frame_robot_status:
-                if r.task == (task_level3[0].ID, task_level3[1].ID):
-                    signal = False
-            if signal:
-                tasks.insert(0, (task_level3[0].ID, task_level3[1].ID))
-            
+        task_level3 = task_tree[18:20]
+        for part in task_level3:
+            if part[0].out_status == '1' and ((part[0].ID, part[1].ID) not in tasks):
+                signal = True
+                for r in frame_robot_status:
+                    if r.task == (part[0].ID, part[1].ID):
+                        signal = False
+                if signal:
+                    tasks.insert(0, (part[0].ID, part[1].ID))
         
         # 显示任务分配策略
         # sys.stderr.write('task:' + str(frame_id) + '\n')
@@ -163,8 +163,8 @@ if __name__ == '__main__':
                 if robot_i.carry != '0':
                     if robot_i.in_work_shop_id == robot_i.task[1]:
                         sys.stdout.write('sell ' + str(i) + '\n')
-                        sys.stdout.write('forward ' + str(i) + ' 0'+'\n')
-                        sys.stdout.write('rotate '+ str(i) + ' 0'+'\n')
+                        # sys.stdout.write('forward ' + str(i) + ' 0'+'\n')
+                        # sys.stdout.write('rotate '+ str(i) + ' 0'+'\n')
                         robot_i.task = None
                         robot_i.target_ID = None  
                     else:    
@@ -174,9 +174,11 @@ if __name__ == '__main__':
                         sys.stdout.write('rotate ' + str(i) + ' ' + args[1] +'\n')
                 else:
                     if robot_i.in_work_shop_id == robot_i.task[0]:
-                        sys.stdout.write('buy '+ str(i) + '\n')
-                        sys.stdout.write('forward ' + str(i) + ' 0' + '\n')
-                        sys.stdout.write('rotate ' + str(i) + ' 0' + '\n')
+                        for workshop_i in frame_workshop_status:
+                            if workshop_i.out_status == '1' and workshop_i.ID == robot_i.task[0]:
+                                sys.stdout.write('buy '+ str(i) + '\n')
+                        # sys.stdout.write('forward ' + str(i) + ' 0' + '\n')
+                        # sys.stdout.write('rotate ' + str(i) + ' 0' + '\n')
                         robot_i.target_ID = robot_i.task[1]
 
                     else:
