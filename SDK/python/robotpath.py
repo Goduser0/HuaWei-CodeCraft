@@ -41,8 +41,6 @@ def robot_control(robot, *frame_workshop_status,):
         current_vy = float(robot.line_speed_y)
         current_w = float(robot.angle_speed)
 
-        time_step = 0.005
-        
         dx = target_x - current_x
         dy = target_y - current_y
         angle_target = math.atan2(dy, dx)

@@ -115,7 +115,7 @@ if __name__ == '__main__':
         task_tree = framework_search(*frame_workshop_status)
         
            
-        if len(tasks) <= 4:
+        if len(tasks) <= 8:
             for i in task_tree[:12]:
                 tasks.append((i[0].ID, i[1].ID))
         else:
@@ -147,12 +147,12 @@ if __name__ == '__main__':
         #     sys.stderr.write(str(task[0]) + '->' + str(task[1]) + '\n')
         
         # 显示robot的任务
-        sys.stderr.write('task:' + str(frame_id) + '\n')
-        for robot in frame_robot_status:
-            if robot.task:
-                sys.stderr.write(robot.ID + ':' + robot.task[0] + '->' + robot.task[1] + '\n')
-            else:
-                sys.stderr.write(robot.ID + ': None' + '\n')
+        # sys.stderr.write('task:' + str(frame_id) + '\n')
+        # for robot in frame_robot_status:
+        #     if robot.task:
+        #         sys.stderr.write(robot.ID + ':' + robot.task[0] + '->' + robot.task[1] + '\n')
+        #     else:
+        #         sys.stderr.write(robot.ID + ': None' + '\n')
         
         # 指令输出
         sys.stdout.write(frame_id + '\n')
