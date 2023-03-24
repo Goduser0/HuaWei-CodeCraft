@@ -52,14 +52,21 @@ def robot_control(robot, *frame_workshop_status):
         
         current_v, robot.v_integral_error, robot.v_prev_error = pid_control(error_distance, robot.v_integral_error, robot.v_prev_error, 'v')
         current_w, robot.w_integral_error, robot.w_prev_error = pid_control(error_target2toward, robot.w_integral_error, robot.w_prev_error, 'w')
-        # if current_w < math.pi:
-        #     linear_velocity = str(current_v)
-        # else:
-        #     linear_velocity = str(min(current_v, 10))
-        # angular_velocity = str(current_w)
         
-        linear_velocity = str(min(current_v, max_linear_velocity))
-        angular_velocity = str(min(current_w, max_angular_velocity))
+        flag1 = True
+        for workshop_i in frame_workshop_status:
+            if workshop_i.type == '7':
+                flag1 = False
+        
+        if flag1:
+            if current_w < math.pi:
+                linear_velocity = str(current_v)
+            else:
+                linear_velocity = str(min(current_v, 1.5))
+            angular_velocity = str(current_w)
+        else:
+            linear_velocity = str(min(current_v, max_linear_velocity))
+            angular_velocity = str(min(current_w, max_angular_velocity))
     else:
         linear_velocity = '0'
         angular_velocity = '0'
