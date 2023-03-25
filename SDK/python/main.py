@@ -47,10 +47,6 @@ if __name__ == '__main__':
     finish()        # 初始化完成
     tasks = []
     task_tree = []
-    v_integral_error = 0.0
-    v_prev_error = 0.0
-    w_integral_error = 0.0
-    w_prev_error = 0.0
     
     while True:
         # 获取帧序号和当前金钱数
@@ -193,6 +189,7 @@ if __name__ == '__main__':
                         for workshop_i in frame_workshop_status:
                             if workshop_i.out_status == '1' and workshop_i.ID == robot_i.task[0]:
                                 sys.stdout.write('buy '+ str(i) + '\n')
+                                break
                         # sys.stdout.write('forward ' + str(i) + ' 0' + '\n')
                         # sys.stdout.write('rotate ' + str(i) + ' 0' + '\n')
                         robot_i.target_ID = robot_i.task[1]
