@@ -87,18 +87,18 @@ def robot_control(robot, *frame_workshop_status):
         # map4
         elif len(workshops_type7) == 1:
             # if abs(error_distance) <= 2.0:
-            #     linear_velocity = str(min(current_v, 1.5))
+            #     linear_velocity = str(min(current_v, 5.5))
             # else:
             #     linear_velocity = str(min(current_v, max_linear_velocity))
             linear_velocity = str(min(current_v, max_linear_velocity))
             angular_velocity = str(min(current_w, max_angular_velocity))
         # map2    
         else:
-            # if abs(error_distance) <= 2.0:
-            #     linear_velocity = str(min(current_v, 1.5))
-            # else:
-            #     linear_velocity = str(min(current_v, max_linear_velocity))
-            linear_velocity = str(min(current_v, max_linear_velocity))
+            if abs(error_distance) <= 2.0:
+                linear_velocity = str(min(current_v, 5.5))
+            else:
+                linear_velocity = str(min(current_v, max_linear_velocity))
+            # linear_velocity = str(min(current_v, max_linear_velocity))
             angular_velocity = str(min(current_w, max_angular_velocity))
     else:
         linear_velocity = '0'
